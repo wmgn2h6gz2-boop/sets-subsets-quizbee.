@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Quiz Bee – Sets and Subsets</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202033;background:#f5f4fb}
+*{box-sizing:border-box}body{margin:0;padding:20px 14px 40px}.wrap{max-width:680px;margin:auto}
+header{text-align:center;margin:10px 0 18px}h1{font-size:clamp(25px,6vw,36px);margin:0 0 5px}header p{color:#656579;margin:0}
+.panel{background:white;border:1px solid #e4e1ee;border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 5px 18px #30205c0a}
+.hidden{display:none!important}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#f3f1fa;border-radius:12px;text-align:center;padding:10px}.stat b{display:block;font-size:22px}.muted{font-size:13px;color:#6e6b7d}
+input{width:100%;padding:13px;border:1px solid #d9d5e5;border-radius:11px;font:inherit;margin:7px 0 14px}
+button{font:inherit;cursor:pointer}.primary{background:#673ab7;color:white;border:0;border-radius:12px;padding:13px 18px;font-weight:800;width:100%;margin-top:12px}
+.choice{width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:13px;border:1px solid #dedbe8;border-radius:12px;background:#faf9fd;margin:7px 0;font-weight:650;color:#252238}
+.choice:disabled{opacity:1}.choice.correct{border:2px solid #15965d;background:#eaf8f0}.choice.wrong{border:2px solid #d64c55;background:#fff0f0}
+.letter{width:28px;height:28px;display:grid;place-items:center;background:#eeeaf7;border-radius:8px;flex-shrink:0}
+.meter{height:9px;background:#e8e5ef;border-radius:20px;overflow:hidden;margin:12px 0}.meter div{height:100%;width:0;background:#8052cb;transition:width .25s}
+.feedback{padding:13px;border-radius:12px;margin-top:12px;line-height:1.5;font-size:14px}
+.reviewrow{background:#f5f3fa;padding:11px;border-radius:10px;margin:8px 0;font-size:14px}
+@media(min-width:520px){body{padding-top:35px}.panel{padding:22px}}
+</style>
+</head>
+<body><main class="wrap">
+<header><h1>🐝 MATH QUIZ BEE</h1><p>Sets and Subsets Challenge</p></header>
+<section id="start" class="panel">
+<div style="text-align:center;font-size:54px">🏆</div><h2 style="text-align:center">Are you ready, Math Champion?</h2>
+<p style="text-align:center;color:#686579">Test your knowledge of elements, subsets, empty sets, union, and intersection.</p>
+<label for="student">Student's name</label><input id="student" placeholder="Enter your name">
+<div class="stats"><div class="stat"><b>10</b><span class="muted">Questions</span></div><div class="stat"><b>10 pts</b><span class="muted">Per question</span></div><div class="stat"><b>100</b><span class="muted">Max score</span></div></div>
+<p class="muted">Choose the best answer. Each correct answer earns 10 points. You can answer each question only once.</p>
+<button class="primary" id="begin">START QUIZ 🚀</button>
+</section>
+<section id="game" class="hidden">
+<div class="stats"><div class="stat"><b id="number">1/10</b><span class="muted">Question</span></div><div class="stat"><b id="score">0</b><span class="muted">Points</span></div><div class="stat"><b id="correct">0</b><span class="muted">Correct</span></div></div>
+<div class="meter"><div id="progress"></div></div>
+<div class="panel"><div style="display:flex;justify-content:space-between;gap:8px"><b id="topic">ELEMENTS</b><span class="muted">10 POINTS</span></div>
+<h2 id="question" style="font-size:21px;line-height:1.4">Question</h2><div id="options"></div>
+<div id="feedback" class="feedback hidden" aria-live="polite"></div>
+<button class="primary hidden" id="next">NEXT QUESTION →</button></div>
+</section>
+<section id="result" class="hidden">
+<div class="panel" style="text-align:center"><div id="trophy" style="font-size:55px">🏆</div><h2>QUIZ COMPLETED!</h2><p id="resultname"></p><div id="finalscore" style="font-size:42px;font-weight:900">0/100</div><h3 id="rating"></h3><div class="meter"><div id="finalbar"></div></div><div class="stats"><div class="stat"><b id="finalcorrect">0</b><span class="muted">Correct</span></div><div class="stat"><b id="finalwrong">0</b><span class="muted">Incorrect</span></div><div class="stat"><b>10</b><span class="muted">Total</span></div></div></div>
+<div class="panel"><h3>📝 Answer Review</h3><div id="review"></div></div>
+<button class="primary" id="retry">↻ PLAY AGAIN</button>
+</section>
+<footer class="muted" style="text-align:center;margin-top:20px">Math Quiz Bee · Sets and Subsets</footer>
+</main>
+<script>
+const questions=[
+{topic:'ELEMENTS',q:'What is an element in a set?',o:['An object or member inside a set','A set with no elements','A collection of two sets','A number outside a set'],a:0,e:'An element is an object or member that belongs to a set.'},
+{topic:'BELONGS TO (∈)',q:'If A = {1, 2, 3, 4}, which statement is TRUE?',o:['5 ∈ A','3 ∈ A','6 ∈ A','7 ∈ A'],a:1,e:'3 is one of the elements listed in set A.'},
+{topic:'DOES NOT BELONG TO (∉)',q:'If A = {2, 4, 6, 8}, which number does NOT belong to A?',o:['2','4','6','5'],a:3,e:'5 is not included in set A, so 5 ∉ A.'},
+{topic:'SUBSETS (⊆)',q:'Given A = {1, 2, 3, 4} and B = {1, 2}, what is the correct statement?',o:['A ⊆ B','B ⊆ A','B = ∅','A = ∅'],a:1,e:'Every element of B is also found in A. Therefore B is a subset of A.'},
+{topic:'EMPTY SET (∅)',q:'Which set is an empty set?',o:['{0}','{1}','{ }','{2, 3}'],a:2,e:'An empty set contains no elements. The symbol ∅ or { } represents it. Remember, {0} is not empty.'},
+{topic:'UNION (∪)',q:'If A = {1, 2, 3} and B = {3, 4, 5}, what is A ∪ B?',o:['{3}','{1, 2, 3, 4, 5}','{1, 2}','{4, 5}'],a:1,e:'Union combines all distinct elements from both sets. Repeated elements are listed only once.'},
+{topic:'INTERSECTION (∩)',q:'If A = {1, 2, 3} and B = {3, 4, 5}, what is A ∩ B?',o:['{1, 2, 3, 4, 5}','{1, 2}','{3}','{4, 5}'],a:2,e:'Intersection contains only the elements shared by both sets. The only common element is 3.'},
+{topic:'ELEMENTS',q:'Let B = {a, b, c}. Which statement is FALSE?',o:['a ∈ B','b ∈ B','c ∈ B','d ∈ B'],a:3,e:'d is not included in set B, so d does not belong to B.'},
+{topic:'SUBSETS',q:'Which of the following is a subset of A = {2, 4, 6, 8}?',o:['{2, 4}','{2, 5}','{4, 9}','{1, 6}'],a:0,e:'Both 2 and 4 are elements of A. Every element of a subset must belong to the original set.'},
+{topic:'UNION AND INTERSECTION',q:'If A = {a, b, c} and B = {b, c, d}, how many elements are in A ∩ B?',o:['1','2','3','4'],a:1,e:'A ∩ B = {b, c}. There are two elements in the intersection.'}
+];
+const $=id=>document.getElementById(id);let index=0,score=0,correct=0,answers=[],student='';function show(id){['start','game','result'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+function begin(){student=$('student').value.trim()||'Student';index=score=correct=0;answers=[];show('game');render()}
+function render(){let q=questions[index];$('number').textContent=(index+1)+'/10';$('score').textContent=score;$('correct').textContent=correct;$('progress').style.width=(index/10*100)+'%';$('topic').textContent=q.topic;$('question').textContent=q.q;$('feedback').classList.add('hidden');$('next').classList.add('hidden');$('options').innerHTML='';q.o.forEach((v,i)=>{let b=document.createElement('button');b.className='choice';let l=document.createElement('span');l.className='letter';l.textContent='ABCD'[i];let t=document.createElement('span');t.textContent=v;b.append(l,t);b.onclick=()=>answer(i);$('options').append(b)})}
+function answer(i){let q=questions[index],ok=i===q.a;answers.push({choice:i,right:ok});if(ok){score+=10;correct++}$('score').textContent=score;$('correct').textContent=correct;[...$('options').children].forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('correct');else if(j===i)b.classList.add('wrong')});let f=$('feedback');f.classList.remove('hidden');f.style.background=ok?'#eaf8f0':'#fff0f0';f.textContent=(ok?'🎉 Correct! +10 points. ':'❌ Not quite! No points earned. ')+q.e;$('next').textContent=index===9?'VIEW MY RESULTS 🏆':'NEXT QUESTION →';$('next').classList.remove('hidden')}
+function finish(){show('result');$('finalscore').textContent=score+'/100';$('resultname').textContent='Well done, '+student+'!';$('finalcorrect').textContent=correct;$('finalwrong').textContent=10-correct;$('finalbar').style.width=score+'%';$('trophy').textContent=score>=80?'🏆':score>=50?'🥈':'🌱';$('rating').textContent=score===100?'PERFECT SCORE! Math genius! 🌟':score>=80?'EXCELLENT! Outstanding work! 🏆':score>=60?'GOOD JOB! Keep practicing! 👏':score>=40?'NICE TRY! Review the lessons! 💪':'KEEP LEARNING! You can do it! 📚';$('review').innerHTML='';questions.forEach((q,i)=>{let r=document.createElement('div');r.className='reviewrow';let h=document.createElement('b');h.textContent=(answers[i].right?'✓ ':'✗ ')+'Q'+(i+1)+': '+q.topic;let d=document.createElement('div');d.className='muted';d.textContent='Your answer: '+q.o[answers[i].choice]+(answers[i].right?'':' | Correct: '+q.o[q.a]);r.append(h,d);$('review').append(r)})}
+$('begin').onclick=begin;$('next').onclick=()=>{index++;index<10?render():finish()};$('retry').onclick=()=>show('start');
+</script>
+</body></html>
