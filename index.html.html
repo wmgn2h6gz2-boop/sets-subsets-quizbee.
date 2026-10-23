@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rainbow Sets & Subsets Quiz Bee</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:18px;font-family:system-ui,-apple-system,sans-serif;background:#fff9fd;color:#252044}
+main{max-width:850px;margin:auto}.hero{text-align:center;padding:20px;border-radius:20px;background:linear-gradient(110deg,#8fd5fa,#e8b6f3,#ffe28e)}
+h1{font-size:clamp(23px,5vw,34px);margin:0;font-weight:950}.hero p{margin:6px 0 0;font-size:14px}
+.stats{display:flex;justify-content:space-between;margin:18px 2px 8px;font-size:13px;font-weight:800}.bar{height:8px;background:#eee;border-radius:20px;overflow:hidden}.bar div{height:100%;width:0;background:linear-gradient(90deg,#ed4b91,#e9b72e,#25b878,#438de7);transition:.25s}
+.deck{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.card{border:2px solid var(--c);border-radius:16px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;min-height:275px}
+.face{padding:13px 11px;min-height:180px;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;color:#18183d}
+.tag{background:var(--c);color:white;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:900}.question{font-size:16px;font-weight:850;line-height:1.4}.art{font-size:45px;font-weight:950;color:var(--c)}
+.back{display:none;background:#ffffff9c}.back.show{display:flex}.answer{font-size:19px;font-weight:950;color:var(--c)}.example{white-space:pre-line;background:#ffffffb8;padding:10px;border-radius:10px;width:100%;font-size:13px;line-height:1.55}
+.reveal{border:0;background:var(--c);color:white;padding:11px;font-weight:900;cursor:pointer}.rating{display:flex;gap:8px;padding:9px}.rating button, .actions button{border:1px solid #ddd;border-radius:10px;padding:10px;font-weight:800;cursor:pointer}.rating button{flex:1}.yes{background:#d4f5df;color:#12683a}.no{background:#ffe1e9;color:#9e2450}
+.score{text-align:center;background:#f2eff8;border-radius:14px;padding:13px;margin-top:16px}.actions{display:flex;gap:9px;margin-top:12px}.actions button{flex:1;background:white}.actions .primary{background:#7653c9;color:white;border-color:#7653c9}
+@media(max-width:440px){body{padding:12px}.deck{gap:8px}.card{min-height:260px}.face{padding:10px 7px}.question{font-size:14px}.example{font-size:12px}}
+@media(max-width:340px){.deck{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<header class="hero"><h1>🌈 Sets and Subsets</h1><div style="font-weight:950;color:#922e91;font-size:20px">TOPIC IDENTIFICATION QUIZ BEE</div><p>Study • Learn • Remember • Succeed! 💛</p></header>
+<div class="stats"><span>🏆 IDENTIFY THE TOPIC</span><span id="count">0 / 8 revealed</span></div><div class="bar"><div id="progress"></div></div>
+<section class="deck" id="deck"></section>
+<div class="score"><b>⭐ Quiz Bee Scoreboard</b><p>✓ <b id="known">0</b> Correct &nbsp; ✕ <b id="missed">0</b> Review</p><small id="message">Guess before revealing the answer!</small></div>
+<div class="actions"><button class="primary" id="all">Reveal all answers</button><button id="reset">↻ Restart quiz</button></div>
+</main>
+<script>
+const data=[
+['A collection of clearly defined objects.','SET','A = {1, 2, 3, 4}','🧺','#e83f85','#ffedf5'],
+['An object or member inside a set.','ELEMENT','A = {1, 2, 3}\\n2 is an element of A.','2','#dc9a0a','#fff4d0'],
+['The symbol that means “belongs to”.','BELONGS TO (∈)','A = {1, 2, 3}\\n2 ∈ A','∈','#21a65d','#e4f9e9'],
+['The symbol that means “does not belong to”.','DOES NOT BELONG TO (∉)','A = {1, 2, 3}\\n5 ∉ A','∉','#9253c8','#f0e5ff'],
+['A set whose every element is found in another set.','SUBSET (⊆)','A = {1, 2, 3, 4}\\nB = {1, 2}\\nB ⊆ A','Ⓑ','#2388ce','#e2f3ff'],
+['A set that contains absolutely no elements.','EMPTY SET (∅)','A = ∅\\nor A = { }','∅','#0eaaa9','#ddfafa'],
+['The operation that combines all elements of two sets.','UNION (∪)','A = {1, 2, 3}\\nB = {3, 4, 5}\\nA ∪ B = {1, 2, 3, 4, 5}','∪','#e99426','#fff0dc'],
+['The operation that finds only elements common to both sets.','INTERSECTION (∩)','A = {1, 2, 3}\\nB = {3, 4, 5}\\nA ∩ B = {3}','∩','#9753cb','#f1e7ff']
+];
+const deck=document.querySelector('#deck'),revealed=new Set(),known=new Set(),missed=new Set();
+data.forEach((d,i)=>{let card=document.createElement('article');card.className='card';card.style.setProperty('--c',d[4]);card.style.setProperty('--bg',d[5]);
+let front=document.createElement('div');front.className='face';front.innerHTML='<span class="tag">FRONT · CARD '+(i+1)+'</span>';let q=document.createElement('div');q.className='question';q.textContent=d[0];let art=document.createElement('div');art.className='art';art.textContent=d[3];front.append(q,art);
+let back=document.createElement('div');back.className='face back';back.innerHTML='<span class="tag">BACK · ANSWER</span>';let ans=document.createElement('div');ans.className='answer';ans.textContent=d[1];let ex=document.createElement('div');ex.className='example';ex.textContent=d[2];back.append(ans,ex);
+let reveal=document.createElement('button');reveal.className='reveal';reveal.textContent='✦ REVEAL ANSWER ✦';function show(){back.classList.add('show');revealed.add(i);reveal.textContent='ANSWER REVEALED ✓';update()}reveal.onclick=show;
+let row=document.createElement('div');row.className='rating';let yes=document.createElement('button');yes.className='yes';yes.textContent='✓ Correct';let no=document.createElement('button');no.className='no';no.textContent='✕ Review';yes.onclick=()=>{if(!revealed.has(i))show();known.add(i);missed.delete(i);update()};no.onclick=()=>{if(!revealed.has(i))show();missed.add(i);known.delete(i);update()};row.append(yes,no);card.append(front,back,reveal,row);deck.append(card)});
+function update(){document.querySelector('#count').textContent=revealed.size+' / 8 revealed';document.querySelector('#progress').style.width=revealed.size/8*100+'%';document.querySelector('#known').textContent=known.size;document.querySelector('#missed').textContent=missed.size;document.querySelector('#message').textContent=known.size===8?'🏆 Perfect! You mastered all the topics!':revealed.size===8?'Great job! Review the cards you missed.':'Guess before revealing the answer!'}
+document.querySelector('#all').onclick=()=>deck.querySelectorAll('.reveal').forEach(b=>b.click());
+document.querySelector('#reset').onclick=()=>{revealed.clear();known.clear();missed.clear();deck.querySelectorAll('.back').forEach(b=>b.classList.remove('show'));deck.querySelectorAll('.reveal').forEach(b=>b.textContent='✦ REVEAL ANSWER ✦');update()};update();
+</script></body></html>
